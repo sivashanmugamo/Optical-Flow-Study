@@ -189,7 +189,9 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# My files & folders
 data/
+output/
 
+.gitignore
 .DS_Store
-/output
