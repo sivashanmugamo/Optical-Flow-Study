@@ -5,12 +5,12 @@ Author: @sivashanmugamo
 import cv2 as cv
 import numpy as np
 
-# cap = cv.VideoCapture("OF/data/test.mp4")
-cap= cv.VideoCapture('OF/data/japan_crossing.mp4')
-ret, first_frame = cap.read()
-prev_gray = cv.cvtColor(first_frame, cv.COLOR_BGR2GRAY)
-mask = np.zeros_like(first_frame)
-mask[..., 1] = 255
+cap = cv.VideoCapture("OF/data/test.mp4")
+# cap= cv.VideoCapture('OF/data/japan_crossing.mp4')
+ret, first_frame= cap.read()
+prev_gray= cv.cvtColor(first_frame, cv.COLOR_BGR2GRAY)
+mask= np.zeros_like(first_frame)
+mask[..., 1]= 255
 
 while(cap.isOpened()):
     ret, frame = cap.read()

@@ -5,11 +5,11 @@ Author: @sivashanmugamo
 import cv2 as cv
 import numpy as np
 
-feature_parameters = dict(maxCorners = 300, qualityLevel = 0.2, minDistance = 2, blockSize = 7)
-filter_parameters = dict(winSize = (15,15), maxLevel = 2, criteria = (cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
+feature_parameters= dict(maxCorners= 300, qualityLevel= 0.2, minDistance= 2, blockSize= 7)
+filter_parameters= dict(winSize= (15,15), maxLevel= 2, criteria= (cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
 
-# cap = cv.VideoCapture("OF/data/test.mp4")
-cap= cv.VideoCapture('OF/data/japan_crossing.mp4')
+cap= cv.VideoCapture("OF/data/test.mp4")
+# cap= cv.VideoCapture('OF/data/japan_crossing.mp4')
 color= (0, 255, 0)
 ret, first_frame= cap.read()
 prev_gray_frame= cv.cvtColor(first_frame, cv.COLOR_BGR2GRAY)
