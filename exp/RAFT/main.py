@@ -72,7 +72,7 @@ def save_images(path: str, imgs: dict) -> None:
 
     i= 1
     for _, val in imgs.items():
-        OF= val['upscaled_OF'][0].permute(1, 2, 0).cpu().numpy()
+        OF= val['upscaled_OF'].permute(1, 2, 0).cpu().numpy()
         OF= flow_viz.flow_to_image(OF)
         OF= Image.fromarray(OF)
         OF.save(os.path.join(path, 'flow_{}.png'.format(i)))
@@ -129,8 +129,8 @@ def main(args):
             # Prediction
             unscaled, upscaled= model(frame_1, frame_2, iters= 20, test_mode= True)
 
-            temp_dict['upscaled_OF']= upscaled
-            temp_dict['unscaled_OF']= unscaled
+            temp_dict['upscaled_OF']= padder.unpad(upscaled[0])
+            temp_dict['unscaled_OF']= unscaled[0]
             pred_dict['pred_{}'.format(i)]= temp_dict
             i+=1
 
