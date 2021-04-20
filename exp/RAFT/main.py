@@ -1,7 +1,12 @@
 '''
+Recurrent All-Pairs Field Transforms (RAFT)
 Author: @sivashanmugamo
 
-python main.py --model --input --output
+Extracts per-pixel features; builds multi-scale 4D correlation volumes for all pairs of pixels;
+and iteratively updates a flow field through a recurrent unit that performs lookups on the 
+correlation volumes.
+
+python main.py --model --input --output --small --mixed_precision
 '''
 
 # Importing required libraries
@@ -14,10 +19,10 @@ from torch import nn, autograd, optim
 from torch.cuda import is_available
 from torch.nn import functional as F
 
+# Importing functions from the Princeton's RAFT repo
 from core.raft import RAFT
 from core.utils import flow_viz
 from core.utils.utils import InputPadder
-from pipelines import eval
 
 DEVICE= torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -83,7 +88,7 @@ def save_prediction(path: str, prediction: dict) -> None:
                            (Scaled & unscaled)
     '''
 
-    i= 0
+    i= 1
     for _, val in prediction.items():
         pred= val['upscaled_OF'].cpu().numpy()
         np.save(os.path.join(path, 'pair_{}_pred.npy'.format(i)), pred)
@@ -100,6 +105,7 @@ def main(args):
 
     imgs= get_images(path= args.input)
 
+    # Initiating parallel processing support
     model= torch.nn.DataParallel(RAFT(args))
 
     # Loading parameters from pretrained model
@@ -128,7 +134,10 @@ def main(args):
             pred_dict['pred_{}'.format(i)]= temp_dict
             i+=1
 
+    # Saving prediction as .npy
     save_prediction(path= args.output, prediction= pred_dict)
+    
+    # Saving prediction as image
     save_images(path= args.output, imgs= pred_dict)
 
 if __name__ == '__main__':
