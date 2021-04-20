@@ -150,4 +150,9 @@ if __name__ == '__main__':
     parser.add_argument('--output')
 
     args= parser.parse_args()
+
+    t_init= time.perf_counter()
     main(args)
+    t_comp= time.perf_counter()
+
+    print('Program completed in {} seconds'.format(t_comp - t_init))
