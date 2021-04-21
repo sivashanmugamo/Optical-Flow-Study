@@ -62,7 +62,7 @@ class OFEvaluation:
 
         data= list()
         for r, d, f in os.walk(path):
-            for each in [i for i in f if i[-4:] == '.npy']:
+            for each in f:
                 data.append(np.load(os.path.join(r, each)))
 
         self.ofs= data.copy()
