@@ -7,6 +7,7 @@ To run: "/Users/shiva/opt/anaconda3/envs/ML Environment/bin/python" data_evaluat
 # Importing required libraries
 import os, argparse
 import numpy as np
+import torch
 
 class OFEvaluation:
     def __init__(self, output_dir: str, truth_dir: str) -> None:
@@ -18,43 +19,66 @@ class OFEvaluation:
             'aae': None, 
             'aepe': None, 
             'ame': None, 
-            'name': None, 
-            'eng': None, 
-            'rms': None, 
-            'nie': None
+            'name': None
         }
 
         self.load_data(path= self.output_dir)
         
     # Average Angular Error
-    def AAE(self):
-        pass
+    def AAE(self, truth: tuple, pred: tuple):
+        ut, vt= truth
+        ue, ve= pred
+
+        M, N= ut.shape
+
+        ut, vt, ue, ve= torch.from_numpy(ut), torch.from_numpy(vt), torch.from_numpy(ue), torch.from_numpy(ve)
+
+        num= (ut * ue) + (vt * ve) + 1
+        den= torch.sqrt((torch.square(ut) + torch.square(vt) + 1)*(torch.square(ue) + torch.square(ve) + 1))
+        rhs= torch.arccos(torch.div(num, den))
+
+        return sum(rhs)/(M*N)
 
     # Average Endpoint Error(AEPE)
-    def AEPE(self):
-        pass
+    def AEPE(self, truth: tuple, pred: tuple):
+        ut, vt= truth
+        ue, ve= pred
+
+        M, N= ut.shape
+
+        rhs= np.sqrt(np.square(ue-ut) + np.square(ve-vt))
+
+        return np.sum(rhs)/(M*N)
 
     # Average Magnitude Error
-    def AME(self):
-        pass
+    def AME(self, truth: tuple, pred: tuple):
+        ut, vt= truth
+        ue, ve= pred
+
+        M, N= ut.shape
+
+        rhs= np.abs(np.sqrt(np.square(ue) + np.square(ve)) - np.sqrt(np.square(ut) + np.square(vt)))
+
+        return np.sum(rhs)/(M*N)
 
     # Normalized Average Magnitude Error
-    def NAME(self):
-        pass
+    def NAME(self, truth: tuple, pred: tuple):
+        ut, vt= truth
+        ue, ve= pred
 
-    # Error Normal to the Gradient (???)
+        M, N= ut.shape
 
-    # Root-Mean-Square Error
-    def RMS(self):
-        pass
+        num= np.abs(np.sqrt(np.square(ue) + np.square(ve)) - np.sqrt(np.square(ut) + np.square(vt)))
+        den= np.sqrt(np.square(ut) + np.square(vt))
+        rhs= np.divide(num, den)
 
-    # Normalized Interpolation Error
-    def NIE(self):
-        pass
+        return np.sum(rhs)/(M*N)
 
-    def evaluate(self):
+    def evaluate(self, truth: tuple, pred: tuple):
+        self.AAE()
         self.AEPE()
-        pass
+        self.AME()
+        self.NAME()
 
     def load_data(self, path: str) -> None:
         '''
